@@ -108,8 +108,8 @@ print('computation finished')
 ### OUTPUT ###
 
 # Save time series to a single file
-np.save("timeseries/bsf_min_time_series.npy", time_series_min)
-np.save("timeseries/OSNAPeast_time_series.npy", time_series_east)
-np.save("timeseries/OSNAPwest_time_series.npy", time_series_west)
+np.save("timeseries/bsfu_mini_time_series.npy", time_series_min)
+np.save("timeseries/osnp_east_time_series.npy", time_series_east)
+np.save("timeseries/osnp_west_time_series.npy", time_series_west)
 
 print('saving successful')
