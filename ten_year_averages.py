@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
-# inagler 09/11/23
+# inagler 23/11/23
+
+import numpy as np          # fundamental package for scientific computing
+import xarray as xr         # data handling
+import pop_tools            # to mask region of interest
+import gsw                  # compute potential density
+import matplotlib.pyplot as plt
+import cmocean.cm as cmo
+import os   
 
 ### INITIALISATION ###
-
-import os                   # interact with the operating system
-# data handling
-import numpy as np
-import xarray as xr
-# plotting and animation
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-# third-party libraries
-import pop_tools            # get masks
-import gsw                  # compute potential density
-import cmocean.cm as cmo    # colormaps
 
 # Setting up of regional mask
 grid_name = 'POP_gx1v7'
 # Setting up of regional mask
 region_defs = {
-    'NorthAtlantic': [{'match': {'REGION_MASK': [6]}, 'bounds': {'TLAT': [-20.0, 66.0]}}],
+    'NorthAtlantic': [{'match': {'REGION_MASK': [6]}, 'bounds': {'TLAT': [20.0, 66.0]}}],
     'LabradorSea': [{'match': {'REGION_MASK': [8]}, 'bounds': {'TLAT': [45.0, 66.0]}}],
     'MediterraneanSea': [{'match': {'REGION_MASK': [7]}}]} 
 mask3d = pop_tools.region_mask_3d(grid_name, region_defs=region_defs, mask_name='North Atlantic')
@@ -81,13 +76,15 @@ def density_MOC(ds):
         
     return overturning
 
+
+
 ### COMPUTATION ###
 
-for i in range(len(event_files)):
+#for i in range(len(event_files)):
     # set beginning of period
     start = (events[i] * 12) - (before * 12)
     end = (events[i] * 12) + (after * 12)
-    
+
     # read in files abnd apply mask
     ds = xr.open_dataset(vvel_path+event_files[i]).isel(time=slice(start,end)).where(mask3d == 1)
     ds_salt = xr.open_dataset(salt_path+event_files[i]).isel(time=slice(start,end)).where(mask3d == 1)
@@ -104,37 +101,41 @@ for i in range(len(event_files)):
     data = density_MOC(ds)
     overturning = np.flipud(data * 1e-12)
     
-    num_frames = end - start
-    interval = 100  # in milliseconds
-    levels = np.linspace(-40, 40, 41)  
+    # Set up plot parameters
+    levels = np.linspace(-40, 40, 41)
+    min_lat, max_lat = 250, 370
+    sigma_level = np.arange(30, 39)  # Assuming these are your sigma levels
 
-    fig, ax = plt.subplots()
-    contour = ax.contourf(np.arange(min_lat, max_lat), sigma_level, overturning[:, :, 0], levels=levels, cmap='RdBu_r')
-    
-    def update(frame):
-        ax.clear()
+    # Create subplots for 6 periods of 10 years each
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-        contour = ax.contourf(np.arange(min_lat, max_lat), sigma_level, overturning[:, :, frame], levels=levels, cmap='RdBu_r')
+    for i in range(6):
+        row, col = divmod(i, 3)
+        ax = axes[row, col]
+
+        # Calculate the start and end months for each 10-year period
+        start_month = i * 12
+        end_month = start_month + 10*12
+
+        # Calculate the 10-year average for the current period
+        avg_over_10_years = np.mean(overturning[:, :, start_month:end_month], axis=2)
+
+        # Create contour plot
+        contour = ax.contourf(np.arange(min_lat, max_lat), sigma_level, avg_over_10_years, levels=levels, cmap='RdBu_r')
 
         ax.set_ylim([38, 30])
-        ax.set_xlim([250, 370])
+        ax.set_xlim([min_lat, max_lat])
 
         ax.set_ylabel(r'Potential Density [$\sigma_2, kg/m^3$]')
         ax.set_xlabel('POP2 Longitude')
+        ax.set_title(f'10-Year Average: {(start*12)+start_month}-{(start*12)+end_month} ')
 
-        # create title
-        time_values = ds.time.isel(time=frame).values
+        cbar = plt.colorbar(contour, ax=ax, label='Circulation Strength [Sv]', extend='both')
+        cbar.set_ticks([-40, -30, -20, -10, 0, 10, 20, 30, 40])
 
-        time_objects = np.array(time_values, dtype='datetime64[ns]')
-        date = np.datetime_as_string(time_objects, unit='M')
-        plt.title(f'Density stream function - {date}')
+    # Adjust layout
+    plt.tight_layout()
 
-    cbar = plt.colorbar(contour, ax=ax, label='Circulation Strength [Sv]', extend='both')
-    cbar.set_ticks([-40, -30, -20, -10, 0, 10, 20, 30, 40]) 
-
-    ani = FuncAnimation(fig, update, frames=num_frames, interval=interval)
-
-    # Save the animation as a file
-    ani.save(os.path.expanduser('~/phase1_CONDA/results/')+'dens_'+event_files[i][:-3]+'.gif', writer='pillow', fps=3)
+    plt.savefig(os.path.expanduser('~/phase1_CONDA/results/')+'density_streamfunctions_averages_'+event_files[i][:-3]+'.png', bbox_inches='tight')
     
     print('saved file: '+event_files[i][:-3])
