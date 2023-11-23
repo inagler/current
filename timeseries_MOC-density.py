@@ -77,7 +77,7 @@ def density_MOC(ds):
             ### get sigma vlaues for selected cross section
             sigma_crossection = ds_t.SIGMA.isel(nlat=j).values
 
-            ### sum over longitudes per sigm bin
+            ### sum over longitudes per sigma bin
             for i in range(len(sigma_level)-1):
                 ind = np.where((sigma_crossection >= sigma_level[i]) & (sigma_crossection < sigma_level[i+1]))
                 sigma_transport[i] = np.nansum(v_transport[ind])

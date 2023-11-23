@@ -9,7 +9,7 @@ import glob                 # return all file paths that match a specific patter
 import pop_tools            # to mask region of interest
 
 path = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/bsf/'
-files = glob.glob(path + '*.nc')
+files = sorted(glob.glob(path + '*.nc'))
 
 #setting up of regional mask
 grid_name = 'POP_gx1v7'

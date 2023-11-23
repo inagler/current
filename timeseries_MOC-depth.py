@@ -9,10 +9,10 @@ import glob                 # return all file paths that match a specific patter
 import pop_tools            # to mask region of interest
 #import time                 # to check duration of computation
 
-#start_time = time.time()
+start_time = time.time()
 
 path = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/vvel/'
-files = glob.glob(path + '*.nc')
+files = sorted(glob.glob(path + '*.nc'))
 
 grid_name = 'POP_gx1v7'
 
@@ -27,7 +27,8 @@ mask3d = mask3d.sum('region')
 # prepare arrays and dictionaries to store files
 len_time = 3012 # length of time series
 intervall = 1004 # to reduce compation time
-dept_time_series_maxi = np.zeros((len_time, len(files)))  # array for min bsf
+dept_time_series_maxi = np.zeros((len_time, len(files)))  # array for max moc
+dept_loc_maxi = np.zeros((len_time, len(files)))  # array for location of max moc
 dept_time_series_rapi = np.zeros((len_time, len(files))) # array for rapid
 dept_time_series_spgy = np.zeros((len_time, len(files))) # array for spg
 
@@ -38,13 +39,17 @@ def depth_MOC(ds):
     ### compute overturning in depth space
     overturning_depth = (ds.VVEL * ds.dz * ds.DXU).sum(dim='nlon').cumsum(dim='z_t') * 1e-6
     # compute maximum time series
-    maxi = overturning_depth.isel(z_t=slice(27, 51)).max(dim=['nlat','z_t']).values
+    maxi_ds = overturning_depth.isel(z_t=slice(27, 51)).max(dim=['nlat', 'z_t'])
+    maxi_loc = maxi_ds['nlat'].values
+    maxi = maxi.values
+    # find location of overturning
+    loc = 
     # compute RAPID time series
     rapi = overturning_depth.isel(nlat=274, z_t=slice(27, 51)).max(dim='z_t').values
     # compute SPG time series
     spgy = overturning_depth.isel(nlat=345, z_t=slice(27, 51)).max(dim='z_t').values
     
-    return maxi, rapi, spgy
+    return maxi, maxi_loc, rapi, spgy
 
 ### COMPUTATION ###
 
@@ -56,7 +61,6 @@ for i in range(7, len(files)):
     
     print('file ', str(i), '/', str(len(files)), ' loaded')
     
-    '''
     ### Update units to SI units
     # Convert the units and update the data variable 'RHO' and 'VVEL'
     ds['VVEL'] = ds.VVEL *1e-2
@@ -73,7 +77,6 @@ for i in range(7, len(files)):
     ds['z_w_top'].attrs['units'] = 'm'
     ds['z_w_bot'].attrs['units'] = 'm'
     ds['DXU'].attrs['units'] = 'm'
-    '''
     
     k=0
     for j in range(3):
@@ -82,13 +85,14 @@ for i in range(7, len(files)):
 
         maxi, rapi, spgy = depth_MOC(ds_int)
 
-        dept_time_series_maxi[k:k+intervall,i], dept_time_series_rapi[k:k+intervall,i], dept_time_series_spgy[k:k+intervall,i] = maxi, rapi, spgy
+        dept_time_series_maxi[k:k+intervall,i], dept_loc_maxi[k:k+intervall,i], dept_time_series_rapi[k:k+intervall,i], dept_time_series_spgy[k:k+intervall,i] = maxi, rapi, spgy
         
         k = k + intervall
         
         print('part ', str(j+1), '/3 computed')
         
     np.save("timeseries/maxi_dept_time_series_"+str(i)+".npy", dept_time_series_maxi[:,i])
+    np.save("timeseries/maxi_dept_loc_"+str(i)+".npy", dept_loc_maxi[:,i])
     np.save("timeseries/rapi_dept_time_series_"+str(i)+".npy", dept_time_series_rapi[:,i])
     np.save("timeseries/spgy_dept_time_series_"+str(i)+".npy", dept_time_series_spgy[:,i])
   
@@ -100,6 +104,7 @@ print('computation finished')
 
 # Save time series to a single file
 np.save("timeseries/maxi_dept_time_series.npy", dept_time_series_maxi)
+np.save("timeseries/maxi_dept_loc.npy", dept_loc_maxi)
 np.save("timeseries/rapi_dept_time_series.npy", dept_time_series_rapi)
 np.save("timeseries/spgy_dept_time_series.npy", dept_time_series_spgy)
 
