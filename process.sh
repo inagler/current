@@ -38,8 +38,8 @@ for file in "${input_directory}"/*; do
             
             ## ADD NANs FOR THE VALUES IN THIS ROW
         fi
-
-        # Optionally, add a delay or any other logic between processing time steps
-        # sleep 1
     done
+    
+    break
+    
 done
