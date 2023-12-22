@@ -54,6 +54,7 @@ for i in range(len(event_files)):
     period2_avg_salt = ds_sss.SALT.isel(time=slice(event+tp, event+after)).mean(dim='time')
     difference_salt = period2_avg_salt - period1_avg_salt
 
+
     # Plotting
     plt.figure(figsize=(12, 6))
 
