@@ -6,7 +6,6 @@ import xarray as xr
 import pop_tools
 import gsw                  # compute potential density
 
-
 ### INITIALISATION
 
 path = '/home/innag3580/phase1_CONDA/'
@@ -66,27 +65,27 @@ for i in range(len(member_numbers)):
     time = slice(period_start, period_end)
 
     temp_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/temp/temp_'+member
-    ds = xr.open_dataset(temp_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds = xr.open_dataset(temp_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('TEMP file loaded')
 
     salt_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/salt/salt_'+member
-    ds_salt = xr.open_dataset(salt_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds_salt = xr.open_dataset(salt_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('SALT file loaded')
 
     hmxl_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/hmxl/hmxl_'+member
-    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('HMXL file loaded')
 
     ssh_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/ssh/ssh_'+member
-    ds_ssh = xr.open_dataset(ssh_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds_ssh = xr.open_dataset(ssh_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('SSH file loaded')
 
     shf_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/shf/shf_'+member
-    ds_shf = xr.open_dataset(shf_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds_shf = xr.open_dataset(shf_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('SHF file loaded')
 
@@ -112,16 +111,13 @@ for i in range(len(member_numbers)):
     ds['HMXL'].attrs['units'] = 'm'
     ds['SSH'].attrs['units'] = 'm'
 
-    # Drop weird variables
-    ds = ds.drop_vars('time_bound')
-
-### OUTPUT
+    if 'time_bound' in ds.variables:
+        ds = ds.drop_vars('time_bound')
 
     # save array
-    ds.to_netcdf(path+'results/composites/composite_'+member)
+    ds.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/composite_'+member)
     
     print(member+' saved')
-    print('SIGMA_2 computed')
     
 print('process complete')
     
