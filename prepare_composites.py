@@ -51,7 +51,7 @@ print('')
 
 ### COMPUTATION
 
-for i in range(len(member_numbers)):
+for i in range(4, len(member_numbers)):
 
     # define entire time range for event
     member = find_corresponding_file_name(member_numbers[i])[5:]
@@ -65,27 +65,27 @@ for i in range(len(member_numbers)):
     time = slice(period_start, period_end)
 
     temp_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/temp/temp_'+member
-    ds = xr.open_dataset(temp_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    ds = xr.open_dataset(temp_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('TEMP file loaded')
 
     salt_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/salt/salt_'+member
-    ds_salt = xr.open_dataset(salt_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    ds_salt = xr.open_dataset(salt_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('SALT file loaded')
 
     hmxl_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/hmxl/hmxl_'+member
-    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('HMXL file loaded')
 
     ssh_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/ssh/ssh_'+member
-    ds_ssh = xr.open_dataset(ssh_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    ds_ssh = xr.open_dataset(ssh_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('SSH file loaded')
 
     shf_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/shf/shf_'+member
-    ds_shf = xr.open_dataset(shf_file).isel(time=time).mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    ds_shf = xr.open_dataset(shf_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('SHF file loaded')
 
@@ -118,6 +118,7 @@ for i in range(len(member_numbers)):
     ds.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/composite_'+member)
     
     print(member+' saved')
+    print('')
     
 print('process complete')
     
