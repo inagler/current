@@ -69,6 +69,7 @@ def plot_temp_frame(time_step):
     time_objects = np.array(time_values, dtype='datetime64[ns]')
     date = np.datetime_as_string(time_objects, unit='M')
     plt.title(f'SST - {date}')
+    
 ### COMPUTATION ###
 
 for i in range(len(event_files)):
