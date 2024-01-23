@@ -93,22 +93,24 @@ for i in range(0, len(member_numbers)):
     print('SHF file loaded')
     
     n_heat_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/n_heat/n_heat_'+member
-    ds_n_heat = xr.open_dataset(shf_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    ds_n_heat = xr.open_dataset(n_heat_file).isel(time=time).resample(time='A').mean(dim='time')
     
     print('N_HEAT file loaded')
     
     # march data
     aice_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/aice/aice_'+member
-    ds_aice = xr.open_dataset(aice_file).sel(time=ds_shf['time.month'] == 3).where(mask3d == 1).roll(nlon=-100)
+    ds_aice = xr.open_dataset(aice_file).isel(time=time)
+    # Select only the months of March
+    ds_aice_march = ds_aice.isel(time=(ds_aice['time.month'] == 3))
     
     print('AICE file loaded')
     
     hmxl_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/hmxl/hmxl_'+member
-    ds_hmxl = xr.open_dataset(hmxl_file).sel(time=ds_shf['time.month'] == 3).where(mask3d == 1).roll(nlon=-100)
+    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds_hmxl_march = ds_hmxl.isel(time=(ds_hmxl['time.month'] == 3))
     
     print('HMXL file loaded')
     
-
     # Create final array
     ds = ds.update(ds_salt[["SALT"]])
 
