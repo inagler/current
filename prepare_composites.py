@@ -92,6 +92,13 @@ for i in range(0, len(member_numbers)):
     
     print('SHF file loaded')
     
+    
+    ''' DOES NOT WORK:
+    
+    # xarray.core.merge.MergeError: unable to determine if these variables should 
+    be coordinates or not in the merged result: {'transport_components', 'transport_regions'}
+    
+    
     n_heat_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/n_heat/n_heat_'+member
     ds_n_heat = xr.open_dataset(n_heat_file).isel(time=time).resample(time='A').mean(dim='time')
     
@@ -104,6 +111,8 @@ for i in range(0, len(member_numbers)):
     ds_aice_march = ds_aice.isel(time=(ds_aice['time.month'] == 3))
     
     print('AICE file loaded')
+    
+    '''
     
     hmxl_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/hmxl/hmxl_'+member
     ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
@@ -125,8 +134,10 @@ for i in range(0, len(member_numbers)):
     ds = ds.update(ds_vvel[["VVEL"]])   
     ds = ds.update(ds_ssh[["SSH"]])
     ds = ds.update(ds_shf[["SHF"]])
+    '''
     ds = ds.update(ds_n_heat[["N_HEAT"]])
     ds = ds.update(ds_aice[["AICE"]])
+    '''
     ds = ds.update(ds_hmxl[["HMXL"]])
     
     print('SIGMA_2 computed')
