@@ -1,3 +1,4 @@
+
 import os                   # to interact with the operating system
 import glob
 
@@ -22,11 +23,12 @@ print('packages check')
 
 files = sorted(glob.glob('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/composite*.nc'))
 
-variables = ['TEMP', 'SALT', 'SIGMA_2', 'HMXL', 'SHF', 'SSH']
-labels = [r'Temperature Anomaly $\Delta T$ [$^{\circ} C$]', r'Haline Anomaly $Delta S$ [$\frac{g}{kg}$]', 
-          r'Potential Density Anomaly $\Delta\sigma_2$ [$\frac{kg}{m^3} -1000$]', r'March Mixed Layer Depth Anomaly $\Delta h$ [$m$]',
-          r'Total Surface Heat Flux Anomaly $\Delta Q_s$ [$\frac{W}{m^2}$]', r'Sea Surface Height Anomaly $\Delta \eta$ [$m$]']
-cmaps = [cmo.balance, cmo.delta, cmo.tarn, cmo.diff, cmo.curl, cmo.diff]
+#variables = ['TEMP', 'SALT', 'VVEL', 'SIGMA_2', 'HMXL', 'SHF', 'SSH']
+variables = ['SIGMA_2', 'HMXL', 'SHF', 'SSH']
+#labels = [r'Temperature Anomaly $\Delta T$ [$^{\circ} C$]', r'Haline Anomaly $Delta S$ [$\frac{g}{kg}$]', r'Meridional Velocity Anomaly $Delta v$ [$\frac{g}{kg}$]', r'Potential Density Anomaly $\Delta\sigma_2$ [$\frac{kg}{m^3} -1000$]', r'March Mixed Layer Depth Anomaly $\Delta h$ [$m$]',r'Total Surface Heat Flux Anomaly $\Delta Q_s$ [$\frac{W}{m^2}$]', r'Sea Surface Height Anomaly $\Delta \eta$ [$m$]']
+labels = [r'Potential Density Anomaly $\Delta\sigma_2$ [$\frac{kg}{m^3} -1000$]', r'March Mixed Layer Depth Anomaly $\Delta h$ [$m$]',r'Total Surface Heat Flux Anomaly $\Delta Q_s$ [$\frac{W}{m^2}$]', r'Sea Surface Height Anomaly $\Delta \eta$ [$m$]']
+#cmaps = [cmo.balance, cmo.delta, cmo.balance, cmo.tarn, cmo.diff, cmo.curl, cmo.diff]
+cmaps = [cmo.tarn, cmo.diff, cmo.curl, cmo.diff]
 
 print('initialisation complete')
 
@@ -39,7 +41,6 @@ for v in range(len(variables)):
     var = variables[v]
     
     print('starting with '+var)
-
 
     var_years = []
     for t in range(60):
@@ -77,7 +78,7 @@ for v in range(len(variables)):
     # Set up initial data
     start = 1
     
-    if var == 'TEMP' or var == 'SALT' or var == 'SIGMA_2':
+    if var == 'TEMP' or var == 'SALT' or var == 'VVEL' or var == 'SIGMA_2':
         ds = ds_var_annual.sel(z_t=slice(5.0000000e+02, 8.7882523e+04)).mean('z_t') - ds_var_annual.isel(time=0).sel(z_t=slice(5.0000000e+02, 8.7882523e+04)).mean('z_t')
     else:
         ds = ds_var_annual - ds_var_annual.isel(time=0)
