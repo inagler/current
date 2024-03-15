@@ -23,8 +23,8 @@ print('packages check')
 vvel_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/VVELcomposite.nc'
 sigma_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/SIGMA_2composite.nc'
 
-
-labels = [r'Barotropic Streamfunction Anomaly $\Delta BSF$ [Sverdrup]', r'Depth Streamfunction Anomaly $Delta dMOC$ [Sverdrup]', 
+labels = [r'Barotropic Streamfunction Anomaly $\Delta BSF$ [Sverdrup]', 
+          r'Depth Streamfunction Anomaly $Delta dMOC$ [Sverdrup]', 
           r'Desnity Streamfunction Anomaly $\Delta \sigma MOC$ [Sverdrup]']
 cmap = cmo.balance
 

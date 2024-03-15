@@ -22,7 +22,6 @@ member_names = np.zeros(len(member_numbers))
 before = 40*12
 after = 20*12
 
-
 # find file names 
 def find_corresponding_file_name(vvel_number_to_find):
     with open(path+'timeseries/order.txt', 'r') as file:
@@ -64,37 +63,6 @@ for i in range(0, len(member_numbers)):
     # select time range in data arrays
     time = slice(period_start, period_end)
 
-    # open files and take annual means 
-
-    # 2d data
-    n_heat_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/n_heat/n_heat_'+member
-    ds_n_heat = xr.open_dataset(n_heat_file).isel(time=time, transport_reg=1, transport_comp=1).resample(time='A').mean(dim='time')
-    
-    print('N_HEAT file loaded')
-    
-    # march data
-    aice_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/aice/aice_'+member
-    ds_aice = xr.open_dataset(aice_file).isel(time=time)
-    ds_aice_march = ds_aice.isel(time=(ds_aice['time.month'] == 3))
-    
-    print('AICE file loaded')
-    
-    ssh_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/ssh/ssh_'+member
-    ds_ssh = xr.open_dataset(ssh_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
-    
-    print('SSH file loaded')
-
-    shf_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/shf/shf_'+member
-    ds_shf = xr.open_dataset(shf_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
-    
-    print('SHF file loaded')
-    
-    hmxl_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/hmxl/hmxl_'+member
-    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
-    ds_hmxl_march = ds_hmxl.isel(time=(ds_hmxl['time.month'] == 3))
-    
-    print('HMXL file loaded')
-    
     # 3d data
     temp_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/temp/temp_'+member
     ds = xr.open_dataset(temp_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
@@ -110,6 +78,37 @@ for i in range(0, len(member_numbers)):
     ds_vvel = xr.open_dataset(vvel_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
     
     print('VVEL file loaded')
+    
+    # open files and take annual means 
+
+    # 2d data
+    n_heat_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/n_heat/n_heat_'+member
+    ds_n_heat = xr.open_dataset(n_heat_file).isel(time=time, transport_reg=1, transport_comp=1).resample(time='A').mean(dim='time')
+    
+    print('N_HEAT file loaded')
+    
+    ssh_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/ssh/ssh_'+member
+    ds_ssh = xr.open_dataset(ssh_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    
+    print('SSH file loaded')
+
+    shf_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/shf/shf_'+member
+    ds_shf = xr.open_dataset(shf_file).isel(time=time).resample(time='A').mean(dim='time').where(mask3d == 1).roll(nlon=-100)
+    
+    print('SHF file loaded')
+    
+    # march data
+    aice_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/aice/aice_'+member
+    ds_aice = xr.open_dataset(aice_file).isel(time=time)
+    ds_aice_march = ds_aice.isel(time=(ds_aice['time.month'] == 3))
+    
+    print('AICE file loaded')
+    
+    hmxl_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/hmxl/hmxl_'+member
+    ds_hmxl = xr.open_dataset(hmxl_file).isel(time=time).where(mask3d == 1).roll(nlon=-100)
+    ds_hmxl_march = ds_hmxl.isel(time=(ds_hmxl['time.month'] == 3))
+    
+    print('HMXL file loaded')
     
     # Create final array
     ds = ds.update(ds_salt[["SALT"]])
