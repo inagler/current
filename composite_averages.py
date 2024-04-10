@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# inagler 16/09/23
 
 import os                   # to interact with the operating system
 import glob

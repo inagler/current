@@ -23,14 +23,14 @@ mask3d = mask3d.sum('region')
 hist_period = (2014-1850)*12
 time = slice(0, hist_period)
 
-variables = ['temp','salt','vvel','shf','ssh','hmxl',] #,'aice','n_heat'
+variables = ['temp','salt','vvel','shf','ssh','hmxl'] #,'aice','n_heat'
 
 path = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/'
 
 for var in variables:
     
     print('')
-    print(var+ 'started')
+    print(var+ ' started')
     print('')
     
     files = sorted(glob.glob(path + var + '/*.nc'))
@@ -40,17 +40,25 @@ for var in variables:
 
     # open file
     for i in range(len(files)):
-        ds = xr.open_dataset(files[i]).isel(time=time)
-        ds = ds[uppercase_var].where(mask3d == 1)
-        
-        if var == 'hmxl':
-            ds = ds.isel(time=(ds['time.month'] == 3))
-        
-        # compute mean per location over time
-        ds = ds.mean('time')
+        try:
+            ds = xr.open_dataset(files[i]).isel(time=time)
+            ds = ds[uppercase_var].where(mask3d == 1)
+            
+            if var == 'hmxl':
+                ds = ds.isel(time=(ds['time.month'] == 3))
+            
+            # compute mean per location over time
+            ds = ds.mean('time')
 
-    # store
-        ds_collect.append(ds)
+            # store
+            ds_collect.append(ds)
+        except Exception as e:
+            print(f"Error processing file '{files[i]}': {str(e)}")
+            continue  # Skip to the next file if an error occurs
+
+    if not ds_collect:  # Check if no valid datasets were collected
+        print(f"No valid datasets found for '{var}'. Skipping.")
+        continue  # Skip to the next variable if no valid datasets were collected
 
     stacked_fields = xr.concat(ds_collect, dim='fields')    
 
@@ -80,22 +88,38 @@ ds_collect = []
 files = sorted(glob.glob(path + var + '/*.nc'))
 # open file
 for i in range(len(files)):
-    ds = xr.open_dataset(files[i]).isel(time=time)
-    ds = ds.where(mask3d == 1)
-    ds = ds.mean('time')
-    ds_collect.append(ds)
-stacked_temp = xr.concat(ds_collect, dim='fields')    
+    try:
+        ds = xr.open_dataset(files[i]).isel(time=time)
+        ds = ds.where(mask3d == 1)
+        ds = ds.mean('time')
+        ds_collect.append(ds)
+    except Exception as e:
+        print(f"Error processing file '{files[i]}': {str(e)}")
+        continue  # Skip to the next file if an error occurs
+
+if not ds_collect:  # Check if no valid datasets were collected
+    print(f"No valid datasets found for '{var}'. Skipping.")
+else:
+    stacked_temp = xr.concat(ds_collect, dim='fields')    
 
 var = 'salt'
 ds_collect = []
 files = sorted(glob.glob(path + var + '/*.nc'))
 # open file
 for i in range(len(files)):
-    ds = xr.open_dataset(files[i]).isel(time=time)
-    ds = ds.where(mask3d == 1)
-    ds = ds.mean('time')
-    ds_collect.append(ds)
-stacked_salt = xr.concat(ds_collect, dim='fields')   
+    try:
+        ds = xr.open_dataset(files[i]).isel(time=time)
+        ds = ds.where(mask3d == 1)
+        ds = ds.mean('time')
+        ds_collect.append(ds)
+    except Exception as e:
+        print(f"Error processing file '{files[i]}': {str(e)}")
+        continue  # Skip to the next file if an error occurs
+
+if not ds_collect:  # Check if no valid datasets were collected
+    print(f"No valid datasets found for '{var}'. Skipping.")
+else:
+    stacked_salt = xr.concat(ds_collect, dim='fields')   
 
 # Compute potential density
 stacked_temp = stacked_temp.update(stacked_salt[["SALT"]])
@@ -134,25 +158,30 @@ uppercase_var = var.upper()
 
 # open file
 for i in range(len(files)):
-    ds = xr.open_dataset(files[i]).isel(time=time)
-    ds = ds.PSL.mean('time')
+    try:
+        ds = xr.open_dataset(files[i]).isel(time=time)
+        ds = ds.PSL.mean('time')
 
-    ds_collect.append(ds)
+        ds_collect.append(ds)
+    except Exception as e:
+        print(f"Error processing file '{files[i]}': {str(e)}")
+        continue  # Skip to the next file if an error occurs
 
-stacked_fields = xr.concat(ds_collect, dim='fields')    
+if not ds_collect:  # Check if no valid datasets were collected
+    print(f"No valid datasets found for '{var}'. Skipping.")
+else:
+    stacked_fields = xr.concat(ds_collect, dim='fields')    
 
-# compute mean between all members per location
-mean_values = stacked_fields.mean(dim='fields')
+    # compute mean between all members per location
+    mean_values = stacked_fields.mean(dim='fields')
 
-# compute standard deviation between all members per location
-std_values = stacked_fields.std(dim='fields')
+    # compute standard deviation between all members per location
+    std_values = stacked_fields.std(dim='fields')
 
-# save field
-# Create a new dataset to store the mean and standard deviation values together
-combined_dataset = xr.Dataset({'mean_values': mean_values, 'std_values': std_values})
+    # save field
+    # Create a new dataset to store the mean and standard deviation values together
+    combined_dataset = xr.Dataset({'mean_values': mean_values, 'std_values': std_values})
 
-print(var + ' completed')
-print('-->')
-print('Adventure successful!!!!')
-
-
+    print(var + ' completed')
+    print('-->')
+    print('adventure accomplished!')

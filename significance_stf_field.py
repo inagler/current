@@ -1,31 +1,32 @@
 #!/usr/bin/env python3
 # inagler 12/04/24
 
-import os                   # to interact with the operating system
+import os                   
 import glob
 
 import numpy as np
 import pandas as pd
 import xarray as xr
 
-import pop_tools            # to mask region of interest
-import gsw                  # compute potential density
+import pop_tools            
+import gsw                  
 
-# set up regional mask
+# Define regional mask
 grid_name = 'POP_gx1v7'
 region_defs = {
-    'North Atlantic and Nordic Seas': [{'match': {'REGION_MASK': [6, 7, 9]}, 'bounds': {'TLAT': [20., 78.]}}],
+    'North Atlantic': [{'match': {'REGION_MASK': [6, 7]}, 'bounds': {'TLAT': [20., 66.]}}],
     'LabradorSea': [{'match': {'REGION_MASK': [8]}, 'bounds': {'TLAT': [45.0, 66.0]}}]} 
 mask3d = pop_tools.region_mask_3d(grid_name, region_defs=region_defs, mask_name='North Atlantic and Nordic Seas')
 mask3d = mask3d.sum('region')
 
-# set time range to historical period
+
+# Set time range to historical period
 hist_period = (2014-1850)*12
 time = slice(0, hist_period)
 
 path = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/'
 
-## stream functions
+# Define stream functions
 def BSF(ds, ds_parameters):
     bsf_ds = (ds.VVEL * ds_parameters.dz * ds_parameters.DXU).sum(dim='z_t').cumsum(dim='nlon')
     return bsf_ds*1e-12
@@ -59,11 +60,7 @@ def density_MOC(ds_vvel, ds_sigma, ds_parameters):
     overturning_ds['nlat'] = ds_parameters.nlat.isel(nlat=slice(min_lat, max_lat))
     return overturning_ds.densMOC
 
-### COMPUTATION
-
-### COMPUTATION
-
-# prepare parameter ds
+# Prepare parameter ds
 dens_file = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/composite_1231.001.nc'
 ds = xr.open_dataset(dens_file).isel(time=0)
 
@@ -73,69 +70,65 @@ bsf_collect = []
 dmoc_collect = []
 smoc_collect = []
 
-# open file
-for i in range(len(files)):
-    print('file '+str(i)+' started')
-    print('')
-    
-    # load vvel file
-    ds_vvel = xr.open_dataset(files[i]).isel(time=time)
-    ds_vvel = ds_vvel.where(mask3d == 1)
-    ds_vvel = ds_vvel.mean('time')
-    
-    # load temp ds
-    ds_temp = xr.open_dataset(path+'temp/temp_'+files[i][-11:]).isel(time=time)
-    ds_temp = ds_temp.where(mask3d == 1)
-    ds_temp = ds_temp.mean('time')
-    
-    # load salt ds
-    ds_salt = xr.open_dataset(path+'salt/salt_'+files[i][-11:]).isel(time=time)
-    ds_salt = ds_salt.where(mask3d == 1)
-    ds_salt = ds_salt.mean('time')
-    
-    # compute sigma ds
-    CT = gsw.conversions.CT_from_pt(ds_salt.SALT, ds_temp.TEMP)
-    ds_vvel['SIGMA_2'] = gsw.density.sigma2(ds_salt.SALT, CT)
-    
-    # compute bsf
-    bsf_ds = BSF(ds_vvel, ds)
-    
-    # compute dmoc
-    dmoc_ds = depth_MOC(ds_vvel, ds)
-    
-    # compute smoc
-    smoc_ds = density_MOC(ds_vvel.VVEL, ds_vvel.SIGMA_2, ds)
-    
-    # store
-    bsf_collect.append(bsf_ds)
-    dmoc_collect.append(dmoc_ds)
-    smoc_collect.append(smoc_ds)
-    print('file '+str(i)+' computation completed')
-    
-    
+# Open and process each file
+for i, file in enumerate(files):
+    print('Processing file', i)
+    try:
+        # Load vvel file
+        ds_vvel = xr.open_dataset(file).isel(time=time)
+        ds_vvel = ds_vvel.where(mask3d == 1).mean('time')
+        
+        # Load temp and salt data
+        ds_temp = xr.open_dataset(path+'temp/temp_'+file[-11:]).isel(time=time)
+        ds_temp = ds_temp.where(mask3d == 1).mean('time')
+        
+        ds_salt = xr.open_dataset(path+'salt/salt_'+file[-11:]).isel(time=time)
+        ds_salt = ds_salt.where(mask3d == 1).mean('time')
+        
+        # Compute sigma ds
+        CT = gsw.conversions.CT_from_pt(ds_salt.SALT, ds_temp.TEMP)
+        ds_vvel['SIGMA_2'] = gsw.density.sigma2(ds_salt.SALT, CT)
+        
+        # Compute bsf, dmoc, and smoc
+        bsf_ds = BSF(ds_vvel, ds)
+        dmoc_ds = depth_MOC(ds_vvel, ds)
+        smoc_ds = density_MOC(ds_vvel.VVEL, ds_vvel.SIGMA_2, ds)
+        
+        # Store computed values
+        bsf_collect.append(bsf_ds)
+        dmoc_collect.append(dmoc_ds)
+        smoc_collect.append(smoc_ds)
+        
+        print('File', i, 'processed successfully')
+    except Exception as e:
+        print('Error processing file', i, ':', e)
+        continue
+
+# Concatenate collected data
 bsf_fields = xr.concat(bsf_collect, dim='fields')
 dmoc_fields = xr.concat(dmoc_collect, dim='fields')    
 smoc_fields = xr.concat(smoc_collect, dim='fields')  
 
-print('fields concatenated')
+print('Fields concatenated')
 
-i=0
-var=['bsf', 'dmoc', 'smoc']
-for stacked_fields in (bsf_fields, dmoc_fields, smoc_fields):
+# Compute mean and standard deviation, and save data
+variables = [bsf_fields, dmoc_fields, smoc_fields]
+var_names = ['bsf', 'dmoc', 'smoc']
+for i, stacked_fields in enumerate(variables):
+    try:
+        # Compute mean between all members per location
+        mean_values = stacked_fields.mean(dim='fields')
 
-    # compute mean between all members per location
-    mean_values = stacked_fields.mean(dim='fields')
+        # Compute standard deviation between all members per location
+        std_values = stacked_fields.std(dim='fields')
 
-    # compute standard deviation between all members per location
-    std_values = stacked_fields.std(dim='fields')
+        # Create a new dataset to store the mean and standard deviation values together
+        combined_dataset = xr.Dataset({'mean_values': mean_values, 'std_values': std_values})
 
-    # save field
-    # Create a new dataset to store the mean and standard deviation values together
-    combined_dataset = xr.Dataset({'mean_values': mean_values, 'std_values': std_values})
+        # Save the dataset to a NetCDF file
+        combined_dataset.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/composites/'+var_names[i]+'_mean_std.nc')
+        print(var_names[i], 'saving completed')
+    except Exception as e:
+        print('Error saving', var_names[i], ':', e)
 
-    # Save the dataset to a NetCDF file
-    combined_dataset.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/composites/'+var[i]+'_mean_std.nc')
-    
-    print(var[i] + ' saving  completed')
-    
-    i=i+1
+print('Adventure complete')
