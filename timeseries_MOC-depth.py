@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 # inagler 12/09/23
 
+# Compute time series of 
+# - maximum dMOC
+# - maximum sMOC  
+# - dMOC in SPG (nlat=345)
+# - sMOC at RAPID (nlat=274)
+# for all available VVEL files
+#
+# Improvement suggestion: save member name with time series
+
 ### INITIALISATION ###
 
 import numpy as np          # fundamental package for scientific computing
