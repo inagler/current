@@ -84,23 +84,13 @@ for i in range(len(var_path)):
                         var_years.append(ds_comp)
 
                     ds_comp.close()
-                    composite_dataset = xr.concat(var_years, dim='time')
                     
-                    if condition == "Above":
-                        mean_datasets_above.append(composite_dataset)
-                        datasets_above = []
-                    elif condition == "Below":
-                        mean_datasets_below.append(composite_dataset)
-                        datasets_below = []
+                    composite_dataset = xr.concat(var_years, dim='time')
+                    composite_dataset.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/' + '#' + str(iteration_count) + save_name[i].replace(".nc", f"_{condition}.nc"))
                     composite_dataset.close()
                     
-                    print('event: ', iteration_count)
-
-    for datasets, condition in zip((mean_datasets_above, mean_datasets_below), ("above", "below")):
-
-        composite_dataset = xr.concat(datasets, dim='time')
-        composite_dataset.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/' + save_name[i].replace(".nc", f"_{condition}.nc"))
-        composite_dataset.close()
+                    print('saved iteration count: ', iteration_count)
+                    
 
         print(condition, ' saved')
     print('ended: ', var_path[i][4:])
