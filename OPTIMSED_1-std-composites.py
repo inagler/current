@@ -37,8 +37,11 @@ region_defs = {
 mask3d = pop_tools.region_mask_3d(grid_name, region_defs=region_defs, mask_name='North Atlantic and Nordic Seas')
 mask3d = mask3d.sum('region')
 
-var_path = ['temp/temp_', 'salt/salt_', 'vvel/vvel_']
-save_name = ['1_std_temp','1_std_salt','1_std_vvel']
+#var_path = ['temp/temp_', 'salt/salt_', 'vvel/vvel_']
+#save_name = ['1_std_temp','1_std_salt','1_std_vvel']
+var_path = ['taux/taux_', 'tauy/tauy_', 'shf/shf_']
+save_name = ['1_std_taux','1_std_tauy','1_std_shf']
+
 
 # Process data in chunks
 def compute_composite_timeseries(datasets):
@@ -52,7 +55,7 @@ def compute_composite_timeseries(datasets):
     composite_dataset = xr.concat(var_years, dim='time')
     return composite_dataset
 
-for i in range(len(var_path)):
+for i in range(1, len(var_path)):
     
     iteration_count_below = 0
     iteration_count_above = 0
@@ -71,8 +74,10 @@ for i in range(len(var_path)):
         for event, condition in zip(group_data['Values'], group_data['Condition']):
             
             event_time = event * 12
-            period_start = event_time - before
+            period_start = max(event_time - before, 0)  # Ensure start is non-negative
             period_end = event_time + after
+            if period_end > ds_member.sizes['time']:
+                period_end = ds_member.sizes['time']  # Ensure end is within bounds
             time_slice = slice(period_start, period_end)
             
             try:
@@ -103,18 +108,18 @@ for i in range(len(var_path)):
         ds_member.close()
 
     # Process remaining data
-    composite_dataset_below = compute_composite_timeseries(datasets_below)
-    iteration_count_below += 1
-    composite_dataset_below.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/' + save_name[i] + '_below_' + str(iteration_count_below) + '.nc')
-    composite_dataset_below.close()
-    datasets_below = []
-    print('saved last below chunk')
+    if datasets_below:
+        composite_dataset_below = compute_composite_timeseries(datasets_below)
+        iteration_count_below += 1
+        composite_dataset_below.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/' + save_name[i] + '_below_' + str(iteration_count_below) + '.nc')
+        composite_dataset_below.close()
+        print('saved last below chunk')
+    
+    if datasets_above:
+        composite_dataset_above = compute_composite_timeseries(datasets_above)
+        iteration_count_above += 1
+        composite_dataset_above.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/'  + save_name[i] + '_above_' + str(iteration_count_above) + '.nc')
+        composite_dataset_above.close()
+        print('saved last above chunk')
 
-    composite_dataset_above = compute_composite_timeseries(datasets_above)
-    iteration_count_below += 1
-    composite_dataset_above.to_netcdf('/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/'  + save_name[i] + '_above_' + str(iteration_count_above) + '.nc')
-    composite_dataset_above.close()
-    datasets_above = []
-    print('saved last above chunk')
-
-print('process complete')    
+print('process complete')     
