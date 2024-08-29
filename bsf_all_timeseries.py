@@ -13,12 +13,11 @@ output_dir = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/all_member_
 grid_name = 'POP_gx1v7'
 region_defs = {
     'SubpolarAtlantic':[
-        {'match': {'REGION_MASK': [6]}, 'bounds': {'TLAT': [15.0, 66.0], 'TLONG': [260.0, 360.0]}}
+        {'match': {'REGION_MASK': [6]}, 'bounds': {'TLAT': [45.0, 66.0], 'TLONG': [260.0, 360.0]}}
     ],
     'LabradorSea': [
         {'match': {'REGION_MASK': [8]}, 'bounds': {'TLAT': [45.0, 66.0]}}
-    ]
-}
+    ]}
 maskBSF = pop_tools.region_mask_3d(grid_name, region_defs=region_defs, mask_name='Subpolar Gyre')
 maskBSF = maskBSF.sum('region')
 maskBSF = maskBSF.roll(nlon=-100)
@@ -38,7 +37,6 @@ def extract_member_id(filename):
     match = re.search(r'vvel_([^.]+(?:\.\d+)?)\.nc', filename)
     return match.group(1) if match else None
 
-
 def calculate_bsf(ds, mask):
     """
     Computes Barotropic Streamfunction (BSF) for the entire dataset applying mask.
@@ -55,7 +53,6 @@ def calculate_bsf(ds, mask):
     bsf = bsf.min(dim=['nlon', 'nlat'])
     return bsf * 1e-12  # Convert to Sverdrup
 
-
 # Process each member
 for file in os.listdir(data_dir):
     if file.endswith('.nc'):
@@ -70,7 +67,6 @@ for file in os.listdir(data_dir):
         
         ds.close()
         min_bsf.close()
-        
 
         print(f'{member_id} saved')
 

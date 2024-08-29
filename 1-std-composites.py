@@ -36,8 +36,11 @@ region_defs = {
 mask3d = pop_tools.region_mask_3d(grid_name, region_defs=region_defs, mask_name='North Atlantic and Nordic Seas')
 mask3d = mask3d.sum('region')
 
-var_path = ['temp/temp_', 'salt/salt_', 'vvel/vvel_']
-save_name = ['1_std_temp_composite.nc','1_std_salt_composite.nc','1_std_vvel_composite.nc']
+#var_path = ['temp/temp_', 'salt/salt_', 'vvel/vvel_']
+#save_name = ['1_std_temp_composite.nc','1_std_salt_composite.nc','1_std_vvel_composite.nc']
+       
+var_path = ['taux/taux_', 'tauy/tauy_', 'shf/shf_']
+save_name = ['1_std_taux_composite.nc','1_std_taux_composite.nc','1_std_shf_composite.nc']
 
 mean_datasets_below = []
 mean_datasets_above = []
@@ -95,4 +98,6 @@ for i in range(len(var_path)):
         print(condition, ' saved')
     print('ended: ', var_path[i][4:])
     print('')
+    
+    
 print('computation complete')
