@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # inagler 11/09/24
 
+# This script calculates and saves the ensemble mean for a hmxl from CESM2 LENS2 datasets:
+# - Sets up the directory paths and variable for processing
+# - Loads datasets in chunks to manage memory usage
+# - Concatenates and accumulates sums across the 'ensemble' dimension
+# - Computes the ensemble mean
+# - Saves the ensemble mean to a NetCDF file
+
 import xarray as xr
 import numpy as np
 import os

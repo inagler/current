@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 22/06/24
 
+# Compute future anomalies for oceanographic variables (TEMP, SALT, SHF)
+# - Define paths and mask regions using pop_tools
+# - Load and process files for specified periods
+# - Apply regional mask, compute period means
+# - Calculate and save the anomaly between future and present periods
+
 import xarray as xr
 import pop_tools
 import glob

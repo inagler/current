@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 # inagler 16/09/23
 
+# Generate event-based datasets for selected ocean variables
+# temp, salt, vvel, n_heat, ssh, shf, aice, hmxl
+# - Load data events and determine periods before and after each event
+# - Retrieve the corresponding NetCDF files for each event and member
+# - Apply regional mask and resample temporal data to annual means
+# - Compute potential density using temperature and salinity data
+# - Combine all relevant variables into a final dataset
+# - Save the final composite dataset for each member, centered around specific events
+
 import numpy as np          # fundamental package for scientific computing
 import xarray as xr
 import pop_tools

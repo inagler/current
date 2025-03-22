@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # inagler 07/11/23
 
+# Compute and plot temperature and salinity differences for event periods in CESM2 LENS2
+# - Define regional mask and data paths
+# - Compute averages and differences for specified pre- and post-event periods
+# - Plot and save temperature and salinity differences
+
 ### INITIALISATION ###
 
 import xarray as xr

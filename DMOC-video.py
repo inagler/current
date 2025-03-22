@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # inagler 12/09/23
 
+# Generate SMOC (Subpolar Meridional Overturning Circulation) animation for LENS2 ocean data
+# - Set paths, initialize variables, and setup regional masks
+# - Define functions for dataset processing and density MOC calculation
+# - Process VVEL, SALT, and TEMP datasets, apply regional masks
+# - Compute potential density
+# - Generate and save animated density MOC plots for a specific period
+
 
 ### INITIALISATION ###
 

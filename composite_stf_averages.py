@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# inagler 17/02/24
+
+# Compute stream functions composites: BSF, depth MOC, density MOC
+
 import os                   # to interact with the operating system
 import glob
 

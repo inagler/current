@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # inagler 22/06/24
 
+# Compute and save monthly mean SHF for each CESM2 LENS2 member
+# - Define input/output paths and regional mask
+# - Extract member IDs from filenames
+# - Calculate regional mean SHF and save to NetCDF
+
 import xarray as xr
 import pop_tools
 import os
@@ -33,13 +38,13 @@ for file in os.listdir(data_dir):
     file_path = os.path.join(data_dir, file)
 
     ds = xr.open_dataset(file_path)
-    annual_shf = ds['SHF'].where(mask3d).mean(dim=['nlat', 'nlon'])
+    monthly_shf = ds['SHF'].where(mask3d).mean(dim=['nlat', 'nlon'])
 
     output_path = os.path.join(output_dir, f'monthly_shf_member_{member_id}.nc')
-    annual_shf.to_netcdf(output_path)
+    monthly_shf.to_netcdf(output_path)
     
     ds.close()
-    annual_shf.close()
+    monthly_shf.close()
 
     print(f'{member_id} saved')
     

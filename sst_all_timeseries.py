@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 22/06/24
 
+# Compute annual mean surface temperature for CESM2 LENS2 members
+# - Define input/output paths and regional mask
+# - Extract member IDs from filenames
+# - Calculate and resample annual mean SST, handle fallbacks if needed
+# - Save results to NetCDF files
+
 import os
 import re
 import gc

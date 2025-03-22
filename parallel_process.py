@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # inagler 19/12/23
 
+# Process vvel NetCDF files to generate CSV files with specific metrics using parallel processing
+# - Scan input directory for .nc files
+# - Define column names for CSV output
+# - Use multiprocessing to run Python scripts for each time step in parallel, limiting to a set number of cores
+# - Collect and write results to CSV files in the output directory
+# - Ensure CSV files in the output directory are cleared before processing
+
 import os
 import glob
 import csv

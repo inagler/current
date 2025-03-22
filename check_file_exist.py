@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # inagler 31/07/24
 
+### Description
+# Check for missing temperature and salinity files in CESM2 LENS2 data
+#
+# - Define directory paths and select latitude
+# - Extract member IDs from filenames
+# - Iterate through velocity files and check for corresponding temperature and salinity files
+# - Log missing files and print summary
+
 import os
 import re
 import xarray as xr

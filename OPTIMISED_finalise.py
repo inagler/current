@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 # inagler 29/05/24
 
+# Combine and average over event datasets to create composites
+# - Load, combine, and average TEMP and SALT datasets
+# - Compute density (sigma) using gsw and save the result
+
 import xarray as xr
 import os
 import gsw  
 
 def process_files(file_pattern, output_filename):
     directory = '/Data/gfi/share/ModData/CESM2_LENS2/ocean/monthly/comp/'
+    #Create a list of file paths in the specified directory that match a given pattern
     file_list = [os.path.join(directory, f) for f in os.listdir(directory) if file_pattern in f]
+    #opens each file with chunking along time dimension
     datasets = [xr.open_dataset(f, chunks={'time': 1}) for f in file_list]
     print(f'{file_pattern} datasets loaded')
 

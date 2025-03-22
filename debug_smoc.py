@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # inagler 21/08/24
 
+# Debug SMOC computation
+# - Set paths and initialize variables
+# - Define functions for dataset processing and density calculation
+# - Process VVEL, TEMP, and SALT datasets, applying regional masks
+# - Compute sigma2 and density overturning at a specific latitude
+# - Debug and ensure data alignment across different datasets
+
 import os
 import re
 import gc

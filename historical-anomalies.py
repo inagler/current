@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 22/06/24
 
+# Compute historical anomalies for ocean variables (TEMP, SALT, SHF)
+# - Define paths and mask regions using pop_tools
+# - Load and process files for specified historical periods
+# - Apply regional mask, compute period means
+# - Calculate and save the anomaly between two historical periods
+
 import xarray as xr
 import pop_tools
 import glob

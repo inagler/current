@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # inagler 25/06/24
 
+# Extract longitude bounds for a specified latitude from a 3D mask
+# - Define region mask using pop_tools
+# - Check active longitude range at given latitude index
+# - Print longitude bounds for specified latitude index
+
 import xarray as xr
 import pop_tools  # Ensure pop_tools is installed
 

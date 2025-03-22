@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # inagler 22/06/24
 
+# Extract and save annual mean HMXL for different members
+# - Define paths and region masks using pop_tools
+# - Extract member ID from filenames
+# - Calculate and save regional annual mean HMXL for each member
+
 import xarray as xr
 import pop_tools
 import os
@@ -32,13 +37,13 @@ for file in os.listdir(data_dir):
     file_path = os.path.join(data_dir, file)
 
     ds = xr.open_dataset(file_path)
-    annual_hmxl = ds['HMXL'].where(mask3d).mean(dim=['nlat', 'nlon'])
+    monthly_hmxl = ds['HMXL'].where(mask3d).mean(dim=['nlat', 'nlon'])
 
     output_path = os.path.join(output_dir, f'monthly_hmxl_member_{member_id}.nc')
-    annual_hmxl.to_netcdf(output_path)
+    monthly_hmxl.to_netcdf(output_path)
     
     ds.close()
-    annual_hmxl.close()
+    monthly_hmxl.close()
 
     print(f'{member_id} saved')
     

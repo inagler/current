@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # inagler 07/11/23
 
+# Animate SST and SSS changes for 3 sigma event composites in CESM2 LENS2
+# - Define regional mask and data paths
+# - Extract and process temperature and salinity for specified periods
+# - Create and save animations for each event showing spatial changes
+
 ### INITIALISATION ###
 
 import xarray as xr

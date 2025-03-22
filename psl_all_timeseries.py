@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # inagler 22/06/24
 
+# Compute and save monthly mean PSL values for each member in CESM2 LENS2
+# - Define input and output directories
+# - Process each NetCDF file in the input directory
+# - Extract member ID from the filename
+# - Select specific latitude and longitude slices, then calculate the mean PSL
+# - Save the resulting monthly mean PSL timeseries to NetCDF files in the output directory
+
+
 import xarray as xr
 import pop_tools
 import os

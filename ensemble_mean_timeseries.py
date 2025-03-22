@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 11/09/23
 
+# This script demeans timeseries data by:
+# - Loading time series from .npy files
+# - Calculating the ensemble mean for each time point
+# - Demeaning the time series by subtracting the ensemble mean from each member
+# - Saving the demeaned time series to new .npy files
+
 ### INITIALISATION ###
 
 import numpy as np          # fundamental package for scientific computing

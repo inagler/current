@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 12/04/24
 
+# Compute historical mean and std for stream functions in CESM2 LENS2 dataset
+# - Define regional mask and historical period
+# - Define functions for Barotropic Stream Function (BSF), Depth MOC, and Density MOC
+# - Load and process VVEL files
+# - Compute mean and std for each stream function and save to NetCDF
+
 import os                   
 import glob
 

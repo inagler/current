@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # inagler 19/12/23
 
+# Generate 4 random float numbers between 0 and 1
+
 import sys
 import random
 

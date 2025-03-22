@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 14/05/24
 
+# Process CESM2 LENS2 ocean data by event conditions and compute composite timeseries
+# - Load event data and corresponding member files
+# - Apply regional mask using pop_tools
+# - Compute composite timeseries for different event conditions (Above/Below)
+# - Save the resulting composites to NetCDF files in chunks
+
 import pandas as pd
 import xarray as xr
 import pop_tools

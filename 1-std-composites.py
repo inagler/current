@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 # inagler 11/05/24
 
+### Description
+# Compute composite datasets for different ocean variables based on event conditions from CESM2 LENS2 data
+#
+# - Load event data and group by index
+# - Define time periods before and after events
+# - Find corresponding file names for ensemble members
+# - Create a regional mask for North Atlantic and Nordic Seas
+# - Loop through specified variables and event conditions
+# - For each variable, slice data for the defined periods and apply the regional mask
+# - Compute and save annual composite datasets for "Above" and "Below" conditions
+
+
 import pandas as pd
 import xarray as xr
 import pop_tools

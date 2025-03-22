@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # inagler 07/12/23
 
+# - Extract filename and time step from command-line arguments
+# - Validate number of arguments
+# - Print the filename and time step
+
 import sys
 
 # Check if the correct number of command-line arguments is provided

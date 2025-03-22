@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 # inagler 12/09/23
 
+# Compute and save time series of maximum overturning circulation for various regions from CESM2 model outputs
+
+# - Define file paths and regional mask for North Atlantic regions
+# - Initialize arrays and ranges for computations and parallel processing
+# - Define density_MOC function to compute maximum, RAPID, and SPG overturning time series
+# - Loop through specified files to:
+#   - Load velocity, salinity, and temperature datasets
+#   - Apply regional mask and calculate potential density
+#   - Compute density-driven overturning circulation using density_MOC function
+#   - Save intermediate and final results of the computations
+
 ### INITIALISATION ###
 
 import numpy as np          # fundamental package for scientific computing

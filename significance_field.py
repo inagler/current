@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # inagler 12/04/24
 
+# Generate mean and standard deviation composites for CESM2 LENS2 variables
+# - Define input paths, regional mask, and time range
+# - Compute mean and std for each variable over the historical period
+# - Save results to NetCDF files
+
 import os                   # to interact with the operating system
 import glob
 

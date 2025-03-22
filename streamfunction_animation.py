@@ -6,6 +6,11 @@ import xarray as xr
 import cmocean.cm as cmo
 import os
 
+# Animate Barotropic Streamfunction (BSF), Depth-Integrated Meridional Overturning Circulation (dMOC),
+# and Density Overturning Circulation (sMOC) for CESM2 LENS2 data
+# - Compute anomalies and visualize time-dependent composites
+# - Create and save animations
+
 print('start BSF')
 
 cmap = cmo.balance

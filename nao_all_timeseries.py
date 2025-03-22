@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # inagler 06/08/24
 
+# Calculate and save the North Atlantic Oscillation (NAO) and East Atlantic Pattern (EAP):
+# - Load PSL datasets and define region mask using pop_tools
+# - Compute monthly NAO and EAP principal components
+# - Normalize and integrate patterns
+# - Save the normalized and integrated time series to NetCDF files
+#    - 'norm_monthly_psl_pattern_{member_id}.nc' with nao and eap
+#    - 'int_monthly_psl_pattern_{member_id}.nc' with nao and eap
+
 import os
 import re
 import gc

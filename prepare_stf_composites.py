@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 23/11/23
 
+# Compute and visualize density and barotropic stream functions for 3 sigma events
+# - Define density and latitude ranges
+# - Calculate density overturning and barotropic stream function for selected variables
+# - Generate subplots of 10-year averages for analysis
+# - Save the resulting visualizations to disk
+
 import numpy as np          # fundamental package for scientific computing
 import xarray as xr         # data handling
 import pop_tools            # to mask region of interest

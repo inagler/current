@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # inagler 16/09/23
 
+### Description
+# Detect change points in time series data using ruptures
+# - Load and initialize time series files
+# - Detect change points for each file using ruptures' Window model
+# - Store results in a dictionary
+# - Save all results to a compressed file
+
 ### INITIALISATION ###
 
 import numpy as np          # fundamental package for scientific computing

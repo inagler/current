@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 31/07/24
 
+# Compute and save annual depth MOC (Meridional Overturning Circulation) for LENS2 ocean data
+# - Set paths, initialize variables, and setup regional masks
+# - Define functions for member ID extraction and DMOC calculation
+# - Process VVEL datasets, apply regional masks, and resample data annually
+# - Compute and save maximum DMOC at specific latitudes to NetCDF files
+
 import xarray as xr
 import os
 import re

@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # inagler 12/09/23
 
+# Test and implement Dask for computing depth MOC (Meridional Overturning Circulation) time series for LENS2 ocean data
+# - Initialize paths, grids, regions, and storage arrays
+# - Define a function to compute depth MOC for each dataset
+# - Use Dask to parallelize file processing
+# - Compute and collect time series for specific latitudes
+# - Save computed time series to files
+
 import numpy as np
 import xarray as xr
 import glob

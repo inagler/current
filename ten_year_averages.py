@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 23/11/23
 
+# Compute and visualize anomalies in density-driven overturning circulation for 3 sigma events
+# - Load datasets and apply regional mask
+# - Compute potential density from salinity and temperature
+# - Calculate density MOC and plot 10-year averages over specified periods
+# - Save contour plots illustrating circulation strength anomalies
+
 import numpy as np          # fundamental package for scientific computing
 import xarray as xr         # data handling
 import pop_tools            # to mask region of interest

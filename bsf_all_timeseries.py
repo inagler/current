@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 # inagler 25/06/24
 
+### Description
+# Compute and save annual minimum Barotropic Streamfunction (BSF) time series for ensemble members from CESM2 LENS2 data
+#
+# - Define data directories and regional mask
+# - Provide member ID extraction from filenames
+# - Compute BSF for the given dataset while applying regional mask
+# - Loop through all dataset files to:
+#     - Extract member ID from filename
+#     - Load dataset, resample to annual means
+#     - Compute minimum BSF per member
+#     - Save computed time series for each member
+
 import xarray as xr
 import os
 import re

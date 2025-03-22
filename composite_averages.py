@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # inagler 16/09/23
 
+# Process LENS2 ocean monthly 3sigma event data:
+# 'TEMP', 'SALT', 'VVEL', 'SIGMA_2', 'HMXL', 'SHF', 'SSH'
+# - Calculate annual composites
+# - Generate animations for annual anomalies
+# - Create flip book plots for 5-year anomalies
+
 import os                   # to interact with the operating system
 import glob
 

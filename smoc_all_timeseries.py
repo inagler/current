@@ -13,6 +13,12 @@ import cftime
 import pop_tools  
 import gsw
 
+# Compute density overturning at 55N for CESM2 LENS2 members
+# - Define regional mask and latitude index
+# - Load and process datasets for velocity, temperature, and salinity
+# - Calculate potential density and density overturning
+# - Save results to NetCDF files
+
 # choose latitude
 sel_nlat = 345
 

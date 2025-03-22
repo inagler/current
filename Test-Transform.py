@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 # inagler 05/09/23
 
+# Compute and visualize density-driven overturning circulation (SMOC) from CESM2 model outputs
+
+# - Define file paths and ensemble member list
+# - Set up regional mask for specific oceanic regions
+# - Loop through each ensemble member and time period to:
+#   - Load velocity, salinity, and temperature datasets
+#   - Merge datasets and apply regional mask
+#   - Compute in situ density and convert units
+#   - Set up grid for XGCM and transform velocity to density coordinates
+#   - Manually transform depth to density coordinates and compute dz
+#   - Calculate overturning circulation (SMOC) in density and depth spaces
+#   - Plot and save the SMOC figures
+
 import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
